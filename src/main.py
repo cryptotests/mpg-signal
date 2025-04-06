@@ -16,7 +16,6 @@ from src.analysis.signals import SignalAnalyzer
 
 from src.utils.email_sender import EmailSender
 
- 
 
 def get_trending_coins(cg_client, cmc_client):
 
