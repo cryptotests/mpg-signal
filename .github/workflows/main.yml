@@ -15,7 +15,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'  # Recommended for better compatibility
+          python-version: '3.10'
 
       - name: Install system dependencies
         run: |
@@ -25,19 +25,19 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip setuptools wheel
-          # Install numpy first to avoid conflicts
           pip install numpy==1.26.0
-          # Install requirements without dexcreener-api
-          grep -v "dexcreener-api" requirements.txt > temp_requirements.txt
-          pip install -r temp_requirements.txt
+          
+          # Handle version corrections
+          sed 's/pycoingecko==4.1.0/pycoingecko==3.2.0/' requirements.txt > temp_requirements.txt
+          grep -v "dexcreener-api" temp_requirements.txt | pip install -r /dev/stdin
           rm temp_requirements.txt
+          
           pip check
 
       - name: Verify installations
         run: |
-          python -c "import numpy; print(f'NumPy {numpy.__version__} installed')"
+          python -c "import pycoingecko; print(f'PyCoinGecko {pycoingecko.__version__} installed')"
           python -c "import pandas; print(f'Pandas {pandas.__version__} installed')"
-          python -c "from pycoingecko import CoinGeckoAPI; print('PyCoinGecko available')"
 
       - name: Run bot
         env:
