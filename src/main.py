@@ -48,7 +48,7 @@ def get_trending_coins(cg_client, cmc_client):
 
 def run_analysis():
 
-    # Initialize clients
+
 
     cg_client = CoinGeckoClient(CONFIG['COINGECKO_API_KEY'])
 
@@ -56,21 +56,15 @@ def run_analysis():
 
     dex_client = DexScreenerClient()
 
-    
 
-    # Initialize analyzer
 
     analyzer = SignalAnalyzer(cg_client, cmc_client, dex_client)
 
-    
 
-    # Get trending coins
 
     trending_coins = get_trending_coins(cg_client, cmc_client)
 
     
-
-    # Analyze coins
 
     results = []
 
@@ -82,13 +76,10 @@ def run_analysis():
 
     
 
-    # Sort and get top 3
-
     top_results = sorted(results, key=lambda x: x['score'], reverse=True)[:CONFIG['TOP_COINS']]
 
     
 
-    # Send email
 
     email_sender = EmailSender(CONFIG['EMAIL_SENDER'], CONFIG['EMAIL_PASSWORD'])
 
