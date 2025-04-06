@@ -1,9 +1,6 @@
-yaml
-
 name: Deploy MPG Signal
 
  
-
 on:
 
   push:
