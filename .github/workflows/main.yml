@@ -1,57 +1,47 @@
-name: Deploy MPG Signal
+name: MPG Signal bot
 
- 
 on:
-
-  push:
-
-    branches: [ main ]
-
-  schedule:
-
-    - cron: '0 20 * * *'
-
- 
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '0 20 * * *'
 
 jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'  # Changed to 3.10 for better compatibility
 
-  deploy:
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential python3-dev
 
-    runs-on: ubuntu-latest
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install numpy==1.24.0  # Install numpy first to avoid conflicts
+          pip install -r requirements.txt
+          pip check  # Verify no dependency conflicts
 
-    steps:
+      - name: Handle problematic packages
+        run: |
+          # Install python-coinmarketcap with compatible version
+          pip install python-coinmarketcap==0.3
+          
+          # Skip dexcreener-api or install from alternative source if absolutely required
+          # pip install git+https://github.com/owner/dexcreener-api.git@main
 
-      - uses: actions/checkout@v2
-
-      - name: Set up Python
-
-        uses: actions/setup-python@v2
-
-        with:
-
-          python-version: '3.11'
-
-      - name: Install dependencies
-
-        run: |
-
-          python -m pip install --upgrade pip
-
-          pip install -r requirements.txt
-
-      - name: Run bot
-
-        env:
-
-          COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
-
-          CMC_API_KEY: ${{ secrets.CMC_API_KEY }}
-
-          EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
-
-          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-
-          EMAIL_RECIPIENT: ${{ secrets.EMAIL_RECIPIENT }}
-
-        run: python src/main.py
-
+      - name: Run bot
+        env:
+          COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
+          CMC_API_KEY: ${{ secrets.CMC_API_KEY }}
+          EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_RECIPIENT: ${{ secrets.EMAIL_RECIPIENT }}
+        run: python src/main.py
