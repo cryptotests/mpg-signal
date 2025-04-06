@@ -1,0 +1,60 @@
+yaml
+
+name: Deploy MPG Signal
+
+ 
+
+on:
+
+  push:
+
+    branches: [ main ]
+
+  schedule:
+
+    - cron: '0 20 * * *'
+
+ 
+
+jobs:
+
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+
+        uses: actions/setup-python@v2
+
+        with:
+
+          python-version: '3.11'
+
+      - name: Install dependencies
+
+        run: |
+
+          python -m pip install --upgrade pip
+
+          pip install -r requirements.txt
+
+      - name: Run bot
+
+        env:
+
+          COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
+
+          CMC_API_KEY: ${{ secrets.CMC_API_KEY }}
+
+          EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
+
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+
+          EMAIL_RECIPIENT: ${{ secrets.EMAIL_RECIPIENT }}
+
+        run: python src/main.py
+
